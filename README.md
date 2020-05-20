@@ -12,3 +12,5 @@ Atividade desenvolvida para a matéria **Pesquisas Operacionais** ministrada pel
 - Pedro Luís Ventroni Pereira. 
 
 # Desenvolvido em REACTJS
+
+Linguagem escolhida.
