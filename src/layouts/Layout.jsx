@@ -37,7 +37,7 @@ class Layout extends React.Component {
   render() {
     return (
       <>
-        <div>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '90vh'}}>
           <h1>Simplex</h1>
           <Switch>{this.getRoutes(routes)}</Switch>
         </div>

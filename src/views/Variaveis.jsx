@@ -37,9 +37,9 @@ class Variaveis extends React.Component {
   render() {
     return (
       <>
-        <div>Quantas variáveis de decisão tem o problema? <input style={{width: '8vw'}} type='number' id='var_decisao' onChange={this.changeVarDecisao} /></div>
-        <div>Quantas restrições tem o problema? <input style={{width: '8vw'}} type='number' id='restricao' onChange={this.changeRestricao} /></div>
-        <button onClick={this.continuar}>Continuar</button>
+        <div>Quantas variáveis de decisão tem o problema? <input style={{width: '10vw'}} type='number' id='var_decisao' onChange={this.changeVarDecisao} /></div>
+        <div style={{marginTop: '1.2vh'}}>Quantas restrições tem o problema? <input style={{width: '10vw'}} type='number' id='restricao' onChange={this.changeRestricao} /></div>
+        <button style={{marginTop: '2vh'}} onClick={this.continuar}>Continuar</button>
       </>
     );
   }

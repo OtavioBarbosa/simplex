@@ -14,7 +14,7 @@ class Quadros extends React.Component {
 
     componentDidMount(){
 
-        if(!localStorage.getItem('var_decisao') || !localStorage.getItem('restricao')){
+        if(!localStorage.getItem('var_decisao') || !localStorage.getItem('restricao') || !localStorage.getItem('objetivo')){
             this.props.history.push('/variaveis')
         }
 
@@ -60,7 +60,12 @@ class Quadros extends React.Component {
         }
 
         for(var v = 0; v < parseInt(localStorage.getItem('var_decisao')); v++){
-            quadro[parseInt(localStorage.getItem('restricao')) + 1].push(parseFloat(localStorage.getItem(`x${v+1}`))*-1)      
+            if(localStorage.getItem('objetivo') === 'max'){
+                quadro[parseInt(localStorage.getItem('restricao')) + 1].push(parseFloat(localStorage.getItem(`x${v+1}`))*-1)   
+            }
+            else{
+                quadro[parseInt(localStorage.getItem('restricao')) + 1].push(parseFloat(localStorage.getItem(`x${v+1}`)))   
+            }   
         }
 
         for(var z = 0; z < parseInt(localStorage.getItem('restricao')) + 1; z++){
@@ -69,9 +74,11 @@ class Quadros extends React.Component {
 
         this.setState({quadro: quadro})
 
-        new Promise(resolve => setTimeout(resolve, 0)).then(() => {
-            this.executarSimplex()
-        })
+        if(localStorage.getItem('exibir') === 'resultado'){
+            new Promise(resolve => setTimeout(resolve, 0)).then(() => {
+                this.executarSimplex()
+            })
+        }
     }
 
     carregarQuadro = (record, i) => {
@@ -91,7 +98,7 @@ class Quadros extends React.Component {
         var indice = 1
         this.state.quadro[parseInt(localStorage.getItem('restricao')) + 1].map((valor, index) => {
             if(index > 0){
-                if(valor < menor){
+                if(valor < menor && valor < 0){
                     menor = valor
                     indice = index
                 }
@@ -107,7 +114,7 @@ class Quadros extends React.Component {
         var indice = 1
         this.state.quadro.map((linha, index) => {
             if(index > 0 && index <= parseInt(localStorage.getItem('restricao'))){
-                if((linha[this.state.quadro[0].length - 1] / linha[indiceEntrar]) < menor){
+                if((linha[this.state.quadro[0].length - 1] / linha[indiceEntrar]) < menor && (linha[this.state.quadro[0].length - 1] / linha[indiceEntrar]) > 0){
                     menor = (linha[this.state.quadro[0].length - 1] / linha[indiceEntrar])
                     indice = index
                 }
@@ -146,8 +153,6 @@ class Quadros extends React.Component {
             linhas.push(linha)
         }
 
-        console.log(linhas)
-
         var quadro = this.state.quadro
         for(var c = 0; c < linhas.length; c++){
             quadro[c+1] = linhas[c]
@@ -169,8 +174,14 @@ class Quadros extends React.Component {
 
     montarResposta = () => {
         var resposta = []
-        for(var i = 1; i < this.state.quadro.length; i++){
+        for(var i = 1; i < this.state.quadro.length - 1; i++){
             resposta.push({variavel: this.state.quadro[i][0], resposta: this.state.quadro[i][this.state.quadro[0].length - 1]})
+        }
+        if(localStorage.getItem('objetivo') === 'max'){
+            resposta.push({variavel: this.state.quadro[i][0], resposta: this.state.quadro[i][this.state.quadro[0].length - 1]})
+        }
+        else{
+            resposta.push({variavel: this.state.quadro[i][0], resposta: parseFloat(this.state.quadro[i][this.state.quadro[0].length - 1])*-1})
         }
         this.setState({resposta: resposta})
     }
@@ -181,6 +192,14 @@ class Quadros extends React.Component {
                 {record.variavel} = {record.resposta}
             </div>
         )
+    }
+
+    continuar = () => {
+        this.executarSimplexParciais()
+        if(!this.verificarParada()){
+            this.montarResposta()
+            document.getElementById('continuar').style.display = 'none'
+        }
     }
 
     executarSimplex = () => {
@@ -199,14 +218,24 @@ class Quadros extends React.Component {
         }
     }
 
+    executarSimplexParciais = () => {
+        var entrar = this.entraBase()
+        var sair = this.sairBase(entrar)
+
+        this.substituirLinhaPivo(entrar, sair)
+
+        this.novoQuadro(entrar, sair)
+    }
+
     render() {
         return (
             <>
-                <table style={{border: '1px solid black'}}>
+                <table style={{border: '1px solid black', overflowX: 'auto'}}>
                     <tbody>
                         {this.state.quadro.map(this.carregarQuadro)}
                     </tbody>
                 </table>
+                {localStorage.getItem('exibir') === 'parciais' ? <button id='continuar' style={{marginTop: '2vh'}} onClick={this.continuar}>Continuar</button> : null}
                 <div style={{marginTop: '2vh'}}>
                     {this.state.resposta.length > 0 && <h1>Resposta</h1>}
                     {this.state.resposta.map(this.carregarResposta)}

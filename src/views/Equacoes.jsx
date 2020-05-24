@@ -7,7 +7,9 @@ class Equacoes extends React.Component {
         super(props);
         this.state = {
             funcao_objetiva: [],
-            restricoes: []
+            restricoes: [],
+            objetivo: 'max',
+            exibir: 'resultado'
         }
     }
 
@@ -33,6 +35,14 @@ class Equacoes extends React.Component {
             restricoes: restricoes
         })
     }
+    
+    changeObjetivo = (event) => {
+        this.setState({objetivo: event.target.value})
+    }
+
+    changeExibir = (event) => {
+        this.setState({exibir: event.target.value})
+    }
 
     continuar = () => {
         var continuar = 1
@@ -56,6 +66,9 @@ class Equacoes extends React.Component {
             }
         }
 
+        localStorage.setItem('objetivo', this.state.objetivo)
+        localStorage.setItem('exibir', this.state.exibir)
+
         if(continuar === 1){
             this.props.history.push('/quadros')
         }
@@ -67,18 +80,30 @@ class Equacoes extends React.Component {
   render() {
     return (
       <>
+        <div style={{marginBottom: '2vh'}}>Objetivo? 
+          <select style={{margin: '0.2vh'}} defaultValue={this.state.objetivo} onChange={this.changeObjetivo}>
+            <option value='max'>Maximizar</option>
+            <option value='min'>Minimizar</option>
+          </select>
+        </div>
+        <div style={{marginBottom: '2vh'}}>Exibir? 
+          <select style={{margin: '0.2vh'}} defaultValue={this.state.exibir} onChange={this.changeExibir}>
+            <option value='resultado'>Resultado</option>
+            <option value='parciais'>Soluções parciais</option>
+          </select>
+        </div>
         <div id='funcao_objetiva'> 
             Função: 
             {
                 this.state.funcao_objetiva.map((valor, index) => {
                     if(valor === this.state.funcao_objetiva.length){
                         return <label key={valor} style={{margin: '0.2vw'}}>
-                                    <input style={{width: '8vw'}} type='number' id={'x' + valor} /> X{valor}
+                                    <input style={{width: '10vw'}} type='number' id={'x' + valor} /> X{valor}
                                 </label>
                     }
                     else{
                         return <label key={valor} style={{margin: '0.2vw'}}>
-                                    <input style={{width: '8vw'}} type='number' id={'x' + valor} /> X{valor} +
+                                    <input style={{width: '10vw'}} type='number' id={'x' + valor} /> X{valor} +
                                 </label>
                     }
                 })
@@ -93,13 +118,13 @@ class Equacoes extends React.Component {
                                     this.state.funcao_objetiva.map((valor, index) => {
                                         if(valor === this.state.funcao_objetiva.length){
                                             return <label key={valor} style={{margin: '0.2vw'}}>
-                                                        <input style={{width: '8vw'}} type='number' id={'x' + valor + valorRestricao} /> X{valor} 
-                                                        {' <= '} <input style={{width: '8vw'}} type='number' id={'b' + valorRestricao} />
+                                                        <input style={{width: '10vw'}} type='number' id={'x' + valor + valorRestricao} /> X{valor} 
+                                                        {' <= '} <input style={{width: '12vw'}} type='number' id={'b' + valorRestricao} />
                                                     </label>
                                         }
                                         else{
                                             return <label key={valor} style={{margin: '0.2vw'}}>
-                                                        <input style={{width: '8vw'}} type='number' id={'x' + valor + valorRestricao} /> X{valor} +
+                                                        <input style={{width: '10vw'}} type='number' id={'x' + valor + valorRestricao} /> X{valor} +
                                                     </label>
                                         }
                                     })
