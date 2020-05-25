@@ -133,6 +133,18 @@ class Equacoes extends React.Component {
                 })
             }
         </div>
+        <div style={{marginBottom: '1.5vh'}}>
+            {
+                this.state.funcao_objetiva.map((valor, index) => {
+                    if(valor === this.state.funcao_objetiva.length){
+                        return <label key={valor} style={{margin: '0.2vw'}}>X{valor} >= 0 </label>
+                    }
+                    else{
+                        return <label key={valor} style={{margin: '0.2vw'}}>X{valor},</label>
+                    }
+                })
+            }
+        </div>
 
         <button onClick={this.continuar}>Continuar</button>
       </>
