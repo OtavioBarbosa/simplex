@@ -183,6 +183,13 @@ class Quadros extends React.Component {
         else{
             resposta.push({variavel: this.state.quadro[i][0], resposta: parseFloat(this.state.quadro[i][this.state.quadro[0].length - 1])*-1})
         }
+        for(var c = 1; c < this.state.quadro[0].length - 1; c++){
+            if(resposta.map((r) => {
+              return r.variavel  
+            }).indexOf(this.state.quadro[0][c]) === -1){
+                resposta.push({variavel: this.state.quadro[0][c], resposta: 0})
+            }
+        }
         this.setState({resposta: resposta})
     }
 
