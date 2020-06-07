@@ -9,7 +9,9 @@ class Equacoes extends React.Component {
             funcao_objetiva: [],
             restricoes: [],
             objetivo: 'max',
-            exibir: 'resultado'
+            exibir: 'resultado',
+            max_interacoes: 1,
+            resolver: false
         }
     }
 
@@ -44,6 +46,15 @@ class Equacoes extends React.Component {
         this.setState({exibir: event.target.value})
     }
 
+    changeMaxInteracoes = (event) => {
+        if(parseFloat(event.target.value) <= 0){
+            alert('Quantidade de interações deve ser maior que 0')
+        }
+        else{
+            this.setState({max_interacoes: event.target.value})
+        }
+    }
+
     continuar = () => {
         var continuar = 1
         for(var i = 0; i < parseInt(localStorage.getItem('var_decisao')); i++){
@@ -68,12 +79,19 @@ class Equacoes extends React.Component {
 
         localStorage.setItem('objetivo', this.state.objetivo)
         localStorage.setItem('exibir', this.state.exibir)
+        if(parseFloat(this.state.max_interacoes) <= 0 || !this.state.max_interacoes){
+            continuar = 2
+        }
+        localStorage.setItem('max_interacoes', this.state.max_interacoes)
 
         if(continuar === 1){
             this.props.history.push('/quadros')
         }
-        else{
+        else if(continuar === 0){
             alert('Preencher todos os campos')
+        }
+        else{
+            alert('Quantidade de interações deve ser maior que 0 ou diferente de vazio')
         }
     }
 
@@ -91,6 +109,9 @@ class Equacoes extends React.Component {
             <option value='resultado'>Resultado</option>
             <option value='parciais'>Soluções parciais</option>
           </select>
+        </div>
+        <div style={{marginBottom: '2vh'}}>Quantidade de interações? 
+          <input type='number' style={{margin: '0.2vh'}} defaultValue={this.state.max_interacoes} onChange={this.changeMaxInteracoes} />
         </div>
         <div id='funcao_objetiva'> 
             Função: 
@@ -119,7 +140,13 @@ class Equacoes extends React.Component {
                                         if(valor === this.state.funcao_objetiva.length){
                                             return <label key={valor} style={{margin: '0.2vw'}}>
                                                         <input style={{width: '10vw'}} type='number' id={'x' + valor + valorRestricao} /> X{valor} 
-                                                        {' <= '} <input style={{width: '12vw'}} type='number' id={'b' + valorRestricao} />
+                                                        {' <= '} <input style={{width: '12vw'}} type='number' id={'b' + valorRestricao} onChange={(evento) => {
+                                                            if(parseFloat(evento.target.value) < 0){
+                                                                alert('Soluções ilimitadas')
+                                                                document.getElementById('b' + valorRestricao).value = ''
+                                                                this.setState({resolver: true})
+                                                            }
+                                                        }}/>
                                                     </label>
                                         }
                                         else{
@@ -145,8 +172,8 @@ class Equacoes extends React.Component {
                 })
             }
         </div>
-
         <button onClick={this.continuar}>Continuar</button>
+        {this.state.resolver && <button style={{marginTop: '2vh'}} onClick={() => {localStorage.clear(); this.props.history.push('/variaveis')}}>Resolver novo simplex</button>}
       </>
     );
   }

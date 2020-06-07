@@ -8,13 +8,14 @@ class Quadros extends React.Component {
         this.state = {
             quadro: [],
             concluir: false,
-            resposta: []
+            resposta: [], 
+            interacoes: 0
         }
     }
 
     componentDidMount(){
 
-        if(!localStorage.getItem('var_decisao') || !localStorage.getItem('restricao') || !localStorage.getItem('objetivo')){
+        if(!localStorage.getItem('var_decisao') || !localStorage.getItem('restricao') || !localStorage.getItem('objetivo') || !localStorage.getItem('max_interacoes')){
             this.props.history.push('/variaveis')
         }
 
@@ -194,11 +195,20 @@ class Quadros extends React.Component {
     }
 
     carregarResposta = (record, i) => {
-        return (
-            <div key={i}>
-                {record.variavel} = {record.resposta}
-            </div>
-        )
+        if(record.variavel !== 'Sem resposta'){
+            return (
+                <div key={i}>
+                    {record.variavel} = {record.resposta}
+                </div>
+            )
+        }
+        else{
+            return (
+                <div key={i}>
+                    {record.variavel}: {record.resposta}
+                </div>
+            )
+        }
     }
 
     continuar = () => {
@@ -213,15 +223,20 @@ class Quadros extends React.Component {
         var entrar = this.entraBase()
         var sair = this.sairBase(entrar)
 
-        this.substituirLinhaPivo(entrar, sair)
+        if(parseInt(localStorage.getItem('max_interacoes')) > this.state.interacoes){
+            this.substituirLinhaPivo(entrar, sair)
 
-        this.novoQuadro(entrar, sair)
+            this.novoQuadro(entrar, sair)
 
-        if(this.verificarParada()){
-            this.executarSimplex()
+            if(this.verificarParada()){
+                this.executarSimplex()
+            }
+            else{
+                this.montarResposta()
+            }
         }
         else{
-            this.montarResposta()
+            this.setState({resposta: [{variavel: 'Sem resposta', resposta: 'Não foi possível encontrar a solução, pois o número de interações não foi suficiente ou a solução é ilimitada.'}]})
         }
     }
 
@@ -229,9 +244,14 @@ class Quadros extends React.Component {
         var entrar = this.entraBase()
         var sair = this.sairBase(entrar)
 
-        this.substituirLinhaPivo(entrar, sair)
+        if(parseInt(localStorage.getItem('max_interacoes')) > this.state.interacoes){
+            this.substituirLinhaPivo(entrar, sair)
 
-        this.novoQuadro(entrar, sair)
+            this.novoQuadro(entrar, sair)
+        }
+        else{
+            this.setState({resposta: [{variavel: 'Sem resposta', resposta: 'Não foi possível encontrar a solução, pois o número de interações não foi suficiente ou a solução é ilimitada.'}]})
+        }
     }
 
     render() {
