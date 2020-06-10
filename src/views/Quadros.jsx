@@ -106,12 +106,15 @@ class Quadros extends React.Component {
             }
             return null
         })
-
+        
         return indice
     }
 
     sairBase = (indiceEntrar) => {
         var menor = this.state.quadro[1][this.state.quadro[0].length - 1] / this.state.quadro[1][indiceEntrar] 
+        if(menor < 0){
+            menor = 1000000000000000000
+        }
         var indice = 1
         this.state.quadro.map((linha, index) => {
             if(index > 0 && index <= parseInt(localStorage.getItem('restricao'))){
@@ -245,6 +248,7 @@ class Quadros extends React.Component {
         var entrar = this.entraBase()
         var sair = this.sairBase(entrar)
 
+        console.log(entrar, sair)
         if(parseInt(localStorage.getItem('max_interacoes')) > this.state.interacoes){
             this.substituirLinhaPivo(entrar, sair)
 

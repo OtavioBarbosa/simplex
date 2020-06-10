@@ -182,6 +182,8 @@ class Analise extends React.Component {
                         {this.state.analise.map(this.carregarAnalise)}
                     </tbody>
                 </table>
+
+                <button style={{marginTop: '2vh'}} onClick={() => {localStorage.clear(); this.props.history.push('/variaveis')}}>Resolver novo simplex</button>
             </>
         );
     }
