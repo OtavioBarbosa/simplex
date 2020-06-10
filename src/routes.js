@@ -2,6 +2,7 @@
 import Variaveis from "./views/Variaveis.jsx";
 import Equacoes from "./views/Equacoes.jsx";
 import Quadros from "./views/Quadros.jsx";
+import Analise from "./views/Analise.jsx";
 
 var routes = [
   {
@@ -30,6 +31,13 @@ var routes = [
     name: "Simplex Quadros",
     icon: "",
     component: Quadros,
+    layout: "/"
+  },
+  {
+    path: "analise",
+    name: "Análise de sensibilidade",
+    icon: "",
+    component: Analise,
     layout: "/"
   }
 ];

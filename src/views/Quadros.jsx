@@ -159,6 +159,7 @@ class Quadros extends React.Component {
             quadro[c+1] = linhas[c]
         }
 
+        localStorage.setItem('quadro', JSON.stringify(quadro))
         this.setState({quadro: quadro, interacoes: this.state.interacoes + 1})
     }
 
@@ -266,6 +267,7 @@ class Quadros extends React.Component {
                 <div style={{marginTop: '2vh'}}>
                     {this.state.resposta.length > 0 && <h1>Resposta</h1>}
                     {this.state.resposta.map(this.carregarResposta)}
+                    {this.state.resposta.length > 0 && this.state.resposta.length !== 1 && <div><button style={{marginTop: '2vh'}} onClick={() => {this.props.history.push('/analise')}}>Análise de sensibilidade</button></div>}
                     {this.state.resposta.length > 0 && <button style={{marginTop: '2vh'}} onClick={() => {localStorage.clear(); this.props.history.push('/variaveis')}}>Resolver novo simplex</button>}
                 </div>
             </>
